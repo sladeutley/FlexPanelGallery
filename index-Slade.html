@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Flex Panels 💪</title>
+  <link href='https://fonts.googleapis.com/css?family=Amatic+SC' rel='stylesheet' type='text/css'>
+</head>
+<body>
+  <style>
+    html {
+      box-sizing: border-box;
+      background: #ffc600;
+      font-family: 'helvetica neue';
+      font-size: 20px;
+      font-weight: 200;
+    }
+    
+    body {
+      margin: 0;
+    }
+    
+    *, *:before, *:after {
+      box-sizing: inherit;
+    }
+
+    .panels {
+      min-height: 100vh;
+      overflow: hidden;
+      display: flex;
+      /* above makes them go side by side */
+    }
+
+    .panel {
+      background: #6B0F9C;
+      box-shadow: inset 0 0 0 5px rgba(255,255,255,0.1);
+      color: white;
+      text-align: center;
+      align-items: center;
+      /* Safari transitionend event.propertyName === flex */
+      /* Chrome + FF transitionend event.propertyName === flex-grow */
+      transition:
+        font-size 0.7s cubic-bezier(0.61,-0.19, 0.7,-0.11),
+        flex 0.7s cubic-bezier(0.61,-0.19, 0.7,-0.11),
+        background 0.2s;
+      font-size: 20px;
+      background-size: cover;
+      background-position: center;
+      flex: 1;
+      /* 1. above, need to go to each individual panel, and tell them how much room each panel/flex box needs. 'flex: 1' means each of them are going to evenly distribute the extra space between eachother; */
+      /* 3. below, need to get them to go up and down  */
+      justify-content: center;
+      align-items: center;
+      display: flex;
+      /* 4. above, 'display: flex' is an example of nesting flex  */
+      flex-direction: column;
+      /* 5. above, default is left to right, so have to do 'flex-direction: column' to make it vertical */
+
+    }
+
+    .panel1 { background-image:url(https://source.unsplash.com/gYl-UtwNg_I/1500x1500); }
+    .panel2 { background-image:url(https://source.unsplash.com/rFKUFzjPYiQ/1500x1500); }
+    .panel3 { background-image:url(https://images.unsplash.com/photo-1465188162913-8fb5709d6d57?ixlib=rb-0.3.5&q=80&fm=jpg&crop=faces&cs=tinysrgb&w=1500&h=1500&fit=crop&s=967e8a713a4e395260793fc8c802901d); }
+    .panel4 { background-image:url(https://source.unsplash.com/ITjiVXcwVng/1500x1500); }
+    .panel5 { background-image:url(https://source.unsplash.com/3MNzGlQM7qs/1500x1500); }
+
+    /* Flex Children / items */
+    .panel > * {
+      margin: 0;
+      width: 100%;
+      transition: transform 0.5s;
+      /* border: 1px solid red; */
+      /* 2. put border to see what's going on - troubleshoot */
+      /* 8. take border away because know where everything is now  */
+      flex: 1 0 auto;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      
+    }
+
+    /* 6. below, need to hide the words on html page for example 'give' all the way up and 'you can' all the way down */
+    .panel > *:first-child { transform: translateY(-100%); }
+    .panel.open-active > *:first-child { transform: translateY(0); }
+    .panel > *:last-child { transform: translateY(100%); }
+    .panel.open-active > *:last-child { transform: translateY(0); }
+ 
+    /* 7. above, when you take off the translate y, it's gonna animate itself in and out. and the way that works is through the 'open.active' above */
+
+    .panel p {
+      text-transform: uppercase;
+      font-family: 'Amatic SC', cursive;
+      text-shadow: 0 0 4px rgba(0, 0, 0, 0.72), 0 0 14px rgba(0, 0, 0, 0.45);
+      font-size: 2em;
+    }
+    
+    .panel p:nth-child(2) {
+      font-size: 4em;
+    }
+
+    .panel.open {
+      /* 9. below, when these panels also have a class of open, what happens is they need to get bigger */
+      flex: 5;
+      /* 10. above, the 'flex: 5' makes it so it takes 5 times the amount of room as the rest of the panels. Also note, the transition stuff (atleast for the font), is happening on line 42 */
+      font-size: 40px;
+    }
+
+  </style>
+
+
+  <div class="panels">
+    <div class="panel panel1">
+      <p>Hey</p>
+      <p>Let's</p>
+      <p>Dance</p>
+    </div>
+    <div class="panel panel2">
+      <p>Give</p>
+      <p>Take</p>
+      <p>Receive</p>
+    </div>
+    <div class="panel panel3">
+      <p>Experience</p>
+      <p>It</p>
+      <p>Today</p>
+    </div>
+    <div class="panel panel4">
+      <p>Give</p>
+      <p>All</p>
+      <p>You can</p>
+    </div>
+    <div class="panel panel5">
+      <p>Life</p>
+      <p>In</p>
+      <p>Motion</p>
+    </div>
+  </div>
+
+  <script>
+    // 11. now time for javascript, so when user clicks, all that css happens. 
+
+    // 12 get nodelist off all panels 
+    const panels = document.querySelectorAll('.panel');
+
+    // 13. write a function that's going to toggle that class of open 
+    function toggleOpen() {
+      this.classList.toggle('open');
+    }
+
+    // 16. write function to toggle at transion end. 
+    function toggleActive(e) {
+      // this.classList.toggle('open-active');
+      // normally we would do above, but there are going to be multiple transition end events being fired 
+      console.log('e.propertyName',e.propertyName);
+      if (e.propertyName.includes('flex')){
+        this.classList.toggle('open-active');
+      }
+
+    }
+
+    // 14. add event listener to toggle that class 
+    panels.forEach(panel => panel.addEventListener('click', toggleOpen));
+    // *****Interesting side note, the reason why it's not 'panels.forEach(panel => panel.addEventListener('click', toggleOpen()));' with that toggleOpen have () in it, is bc that would load on page load. instead we want to just reference the function so it only works when clicked on
+
+    // 15. below, need to listen transition end event to bring in the word from the top and bottom (on html page)
+    panels.forEach(panel => panel.addEventListener('transitionend', toggleActive));
+
+
+
+  </script>
+
+
+
+</body>
+</html>
